@@ -11,10 +11,11 @@ class JobboleSpider(scrapy.Spider):
     start_urls = ['http://blog.jobbole.com/all-posts/']
 
     def parse(self, response):
-        post_urls = response.css('#archive .floated-thumb .post-thumb a::attr(href)').extract()
-        for post_url in post_urls:
-            print(post_url)
-            yield Request(url=parse.urljoin(response.url, post_url), callback=self.parse_detail)
+        post_nodes = response.css('#archive .floated-thumb .post-thumb a')
+        for post_node in post_nodes:
+            image_url = post_node.css('img::attr(src)').extract_first('')
+            post_url = post_node.css('::attr(href)').extract_first('')
+            yield Request(url=parse.urljoin(response.url, post_url), meta={'front_image_url': image_url}, callback=self.parse_detail)
 
         next_url = response.css('.next.page-numbers::attr(href)').extract_first('')
         if next_url:
@@ -22,6 +23,7 @@ class JobboleSpider(scrapy.Spider):
 
 
     def parse_detail(self, response):
+        front_image_url = response.meta.get('front_image_url', '')
         titlt = response.xpath('//div[@class="entry-header"]/h1/text()').extract()[0]
         create_date = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/text()').extract()[0].strip().replace('·', '').strip()
         praise_nums = response.xpath('//span[contains(@class, "vote-post-up")]/h10/text()').extract()[0]
