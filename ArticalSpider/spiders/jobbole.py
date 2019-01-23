@@ -11,12 +11,14 @@ from ArticalSpider.utils.common import get_md5
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
     allowed_domains = ['blog.jobbole.com']
-    start_urls = ['http://blog.jobbole.com/all-posts/']
+    # start_urls = ['http://blog.jobbole.com/all-posts/']
+    start_urls = ['http://blog.jobbole.com/all-posts/page/563/']
 
     def parse(self, response):
         post_nodes = response.css('#archive .floated-thumb .post-thumb a')
         for post_node in post_nodes:
             image_url = post_node.css('img::attr(src)').extract_first('')
+            image_url = parse.urljoin(response.url, image_url)
             post_url = post_node.css('::attr(href)').extract_first('')
             yield Request(url=parse.urljoin(response.url, post_url), meta={'front_image_url': image_url}, callback=self.parse_detail)
 
@@ -28,11 +30,10 @@ class JobboleSpider(scrapy.Spider):
     def parse_detail(self, response):
         artical_item = JobBoleArticleItem()
         
-        
         front_image_url = response.meta.get('front_image_url', '')
         title = response.xpath('//div[@class="entry-header"]/h1/text()').extract()[0]
         create_date = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/text()').extract()[0].strip().replace('·', '').strip()
-        praise_nums = response.xpath('//span[contains(@class, "vote-post-up")]/h10/text()').extract()[0]
+        praise_nums = response.xpath('//span[contains(@class, "vote-post-up")]/h10/text()').extract_first('')
         fav_nums = response.xpath('//span[contains(@class, "bookmark-btn")]/text()').extract()[0]
         match_re = re.match('.*?(\d+).*', fav_nums)
         if match_re:

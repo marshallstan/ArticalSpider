@@ -67,9 +67,9 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'ArticalSpider.pipelines.ArticalspiderPipeline': 300,
+    'ArticalSpider.pipelines.ArticleImagePipeline': 1,
+    'ArticalSpider.pipelines.JsonExporterPipeline': 2,
     # 'scrapy.pipelines.images.ImagesPipeline': 1,
-    'ArticalSpider.pipelines.ArticleImagePipeline': 1
 }
 IMAGES_URLS_FIELD = 'front_image_url'
 project_dir = os.path.abspath(os.path.dirname(__file__))
