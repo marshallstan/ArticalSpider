@@ -4,6 +4,9 @@ import re
 from scrapy.http import Request
 from urllib import parse
 
+from ArticalSpider.items import JobBoleArticleItem
+from ArticalSpider.utils.common import get_md5
+
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
@@ -23,8 +26,11 @@ class JobboleSpider(scrapy.Spider):
 
 
     def parse_detail(self, response):
+        artical_item = JobBoleArticleItem()
+        
+        
         front_image_url = response.meta.get('front_image_url', '')
-        titlt = response.xpath('//div[@class="entry-header"]/h1/text()').extract()[0]
+        title = response.xpath('//div[@class="entry-header"]/h1/text()').extract()[0]
         create_date = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/text()').extract()[0].strip().replace('·', '').strip()
         praise_nums = response.xpath('//span[contains(@class, "vote-post-up")]/h10/text()').extract()[0]
         fav_nums = response.xpath('//span[contains(@class, "bookmark-btn")]/text()').extract()[0]
@@ -47,4 +53,15 @@ class JobboleSpider(scrapy.Spider):
         tag_list = [element for element in tag_list if not element.strip().endswith('评论')]
         tags = ','.join(tag_list)
 
-        pass
+        artical_item['url_object_id'] = get_md5(response.url)
+        artical_item['title'] = title
+        artical_item['url'] = response.url
+        artical_item['create_date'] = create_date
+        artical_item['front_image_url'] = [front_image_url]
+        artical_item['praise_nums'] = praise_nums
+        artical_item['comment_nums'] = comment_nums
+        artical_item['fav_nums'] = fav_nums
+        artical_item['tags'] = tags
+        artical_item['content'] = content
+        
+        yield artical_item
