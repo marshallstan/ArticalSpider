@@ -10,6 +10,8 @@ import json
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy.exporters import JsonItemExporter
 
+import MySQLdb
+
 class ArticalspiderPipeline(object):
     def process_item(self, item, spider):
         return item
@@ -24,6 +26,20 @@ class JsonWithEncodingPipeline(object):
         return item
     def spider_closed(self, spider):
         self.file.close()
+
+
+class MysqlPipeline(object):
+    def __init__(self):
+        self.conn = MySQLdb.connect('localhost', 'root', 'root888', 'article_spider', charset='utf8', use_unicode=True)
+        self.cursor = self.conn.cursor()
+    def process_item(self, item, spider):
+        insert_sql = """
+            insert into jobbole_article(title, url, create_date, fav_nums)
+            VALUES (%s, %s, %s, %s)
+        """
+        self.cursor.execute(insert_sql, (item['title'], item['url'], item['create_date'], item['fav_nums']))
+        self.conn.commit()
+        return item
 
 
 class JsonExporterPipeline(object):
