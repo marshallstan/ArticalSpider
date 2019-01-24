@@ -2,7 +2,7 @@
 
 import os
 
-# Scrapy settings for ArticalSpider project
+# Scrapy settings for ArticleSpider project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -11,14 +11,14 @@ import os
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'ArticalSpider'
+BOT_NAME = 'ArticleSpider'
 
-SPIDER_MODULES = ['ArticalSpider.spiders']
-NEWSPIDER_MODULE = 'ArticalSpider.spiders'
+SPIDER_MODULES = ['ArticleSpider.spiders']
+NEWSPIDER_MODULE = 'ArticleSpider.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'ArticalSpider (+http://www.yourdomain.com)'
+#USER_AGENT = 'ArticleSpider (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -49,13 +49,13 @@ ROBOTSTXT_OBEY = False
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'ArticalSpider.middlewares.ArticalspiderSpiderMiddleware': 543,
+#    'ArticleSpider.middlewares.ArticalspiderSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'ArticalSpider.middlewares.ArticalspiderDownloaderMiddleware': 543,
+#    'ArticleSpider.middlewares.ArticalspiderDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -67,8 +67,8 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'ArticalSpider.pipelines.ArticleImagePipeline': 1,
-    'ArticalSpider.pipelines.JsonExporterPipeline': 2,
+    'ArticleSpider.pipelines.ArticleImagePipeline': 1,
+    'ArticleSpider.pipelines.JsonExporterPipeline': 2,
     # 'scrapy.pipelines.images.ImagesPipeline': 1,
 }
 IMAGES_URLS_FIELD = 'front_image_url'
