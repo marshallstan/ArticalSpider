@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import re
+import datetime
 from scrapy.http import Request
 from urllib import parse
 
@@ -57,6 +58,11 @@ class JobboleSpider(scrapy.Spider):
         artical_item['url_object_id'] = get_md5(response.url)
         artical_item['title'] = title
         artical_item['url'] = response.url
+        # noinspection PyBroadException
+        try:
+            create_date = datetime.datetime.strptime(create_date, '%Y/%m/%d').date()
+        except:
+            create_date = datetime.datetime.now().date()
         artical_item['create_date'] = create_date
         artical_item['front_image_url'] = [front_image_url]
         artical_item['praise_nums'] = praise_nums
