@@ -4,6 +4,7 @@ import re
 import datetime
 from scrapy.http import Request
 from urllib import parse
+from scrapy.loader import ItemLoader
 
 from ArticleSpider.items import JobBoleArticleItem
 from ArticleSpider.utils.common import get_md5
@@ -27,48 +28,63 @@ class JobboleSpider(scrapy.Spider):
         if next_url:
             yield Request(url=parse.urljoin(response.url, next_url), callback=self.parse)
 
-
     def parse_detail(self, response):
-        artical_item = JobBoleArticleItem()
-        
-        front_image_url = response.meta.get('front_image_url', '')
-        title = response.xpath('//div[@class="entry-header"]/h1/text()').extract()[0]
-        create_date = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/text()').extract()[0].strip().replace('·', '').strip()
-        praise_nums = response.xpath('//span[contains(@class, "vote-post-up")]/h10/text()').extract_first('')
-        fav_nums = response.xpath('//span[contains(@class, "bookmark-btn")]/text()').extract()[0]
-        match_re = re.match('.*?(\d+).*', fav_nums)
-        if match_re:
-            fav_nums = int(match_re.group(1))
-        else:
-            fav_nums = 0
+        # article_item = JobBoleArticleItem()
+        #
+        # front_image_url = response.meta.get('front_image_url', '')
+        # title = response.xpath('//div[@class="entry-header"]/h1/text()').extract()[0]
+        # create_date = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/text()').extract()[0].strip().replace('·', '').strip()
+        # praise_nums = response.xpath('//span[contains(@class, "vote-post-up")]/h10/text()').extract_first('')
+        # fav_nums = response.xpath('//span[contains(@class, "bookmark-btn")]/text()').extract()[0]
+        # match_re = re.match('.*?(\d+).*', fav_nums)
+        # if match_re:
+        #     fav_nums = int(match_re.group(1))
+        # else:
+        #     fav_nums = 0
+        #
+        # comment_nums = response.xpath('//a[@href="#article-comment"]/span/text()').extract()[0]
+        # match_re = re.match('.*?(\d+).*', comment_nums)
+        # if match_re:
+        #     comment_nums = int(match_re.group(1))
+        # else:
+        #     comment_nums = 0
+        #
+        # content = response.xpath('//div[@class="entry"]').extract()[0]
+        #
+        # tag_list = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/a/text()').extract()
+        # tag_list = [element for element in tag_list if not element.strip().endswith('评论')]
+        # tags = ','.join(tag_list)
+        #
+        # article_item['url_object_id'] = get_md5(response.url)
+        # article_item['title'] = title
+        # article_item['url'] = response.url
+        # # noinspection PyBroadException
+        # try:
+        #     create_date = datetime.datetime.strptime(create_date, '%Y/%m/%d').date()
+        # except:
+        #     create_date = datetime.datetime.now().date()
+        # article_item['create_date'] = create_date
+        # article_item['front_image_url'] = [front_image_url]
+        # article_item['praise_nums'] = praise_nums
+        # article_item['comment_nums'] = comment_nums
+        # article_item['fav_nums'] = fav_nums
+        # article_item['tags'] = tags
+        # article_item['content'] = content
 
-        comment_nums = response.xpath('//a[@href="#article-comment"]/span/text()').extract()[0]
-        match_re = re.match('.*?(\d+).*', comment_nums)
-        if match_re:
-            comment_nums = int(match_re.group(1))
-        else:
-            comment_nums = 0
+        # 通过item_loader加载item
+        front_image_url = response.meta.get("front_image_url", "")
+        item_loader = ItemLoader(item=JobBoleArticleItem(), response=response)
+        item_loader.add_css('title', '.entry-header h1::text')
+        item_loader.add_value('url', response.url)
+        item_loader.add_value('url_object_id', get_md5(response.url))
+        item_loader.add_css("create_date", "p.entry-meta-hide-on-mobile::text")
+        item_loader.add_value("front_image_url", [front_image_url])
+        item_loader.add_css("praise_nums", ".vote-post-up h10::text")
+        item_loader.add_css("comment_nums", "a[href='#article-comment'] span::text")
+        item_loader.add_css("fav_nums", ".bookmark-btn::text")
+        item_loader.add_css("tags", "p.entry-meta-hide-on-mobile a::text")
+        item_loader.add_css("content", "div.entry")
 
-        content = response.xpath('//div[@class="entry"]').extract()[0]
+        article_item = item_loader.load_item()
 
-        tag_list = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/a/text()').extract()
-        tag_list = [element for element in tag_list if not element.strip().endswith('评论')]
-        tags = ','.join(tag_list)
-
-        artical_item['url_object_id'] = get_md5(response.url)
-        artical_item['title'] = title
-        artical_item['url'] = response.url
-        # noinspection PyBroadException
-        try:
-            create_date = datetime.datetime.strptime(create_date, '%Y/%m/%d').date()
-        except:
-            create_date = datetime.datetime.now().date()
-        artical_item['create_date'] = create_date
-        artical_item['front_image_url'] = [front_image_url]
-        artical_item['praise_nums'] = praise_nums
-        artical_item['comment_nums'] = comment_nums
-        artical_item['fav_nums'] = fav_nums
-        artical_item['tags'] = tags
-        artical_item['content'] = content
-        
-        yield artical_item
+        yield article_item
