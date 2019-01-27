@@ -2,6 +2,7 @@
 __author__ = 'marshall'
 import hashlib
 
+
 def get_md5(url):
     if isinstance(url, str):
         url = url.encode('utf-8')

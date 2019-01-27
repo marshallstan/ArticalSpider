@@ -15,7 +15,7 @@ import MySQLdb
 import MySQLdb.cursors
 
 
-class ArticalspiderPipeline(object):
+class ArticlespiderPipeline(object):
     def process_item(self, item, spider):
         return item
 
