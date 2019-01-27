@@ -13,6 +13,7 @@ class ArticalspiderItem(scrapy.Item):
     # name = scrapy.Field()
     pass
 
+
 class JobBoleArticleItem(scrapy.Item):
     title = scrapy.Field()
     create_date = scrapy.Field()
