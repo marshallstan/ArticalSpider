@@ -67,7 +67,7 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    # 'ArticleSpider.pipelines.ArticleImagePipeline': 1,
+    'ArticleSpider.pipelines.ArticleImagePipeline': 1,
     # 'ArticleSpider.pipelines.JsonExporterPipeline': 2,
     # 'ArticleSpider.pipelines.MysqlPipeline': 3,
     'ArticleSpider.pipelines.MysqlTwistedPipeline': 3,

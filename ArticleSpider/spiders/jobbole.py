@@ -4,9 +4,8 @@ import re
 import datetime
 from scrapy.http import Request
 from urllib import parse
-from scrapy.loader import ItemLoader
 
-from ArticleSpider.items import JobBoleArticleItem
+from ArticleSpider.items import JobBoleArticleItem, ArticleItemLoader
 from ArticleSpider.utils.common import get_md5
 
 
@@ -73,13 +72,13 @@ class JobboleSpider(scrapy.Spider):
 
         # 通过item_loader加载item
         front_image_url = response.meta.get("front_image_url", "")
-        item_loader = ItemLoader(item=JobBoleArticleItem(), response=response)
+        item_loader = ArticleItemLoader(item=JobBoleArticleItem(), response=response)
         item_loader.add_css('title', '.entry-header h1::text')
         item_loader.add_value('url', response.url)
         item_loader.add_value('url_object_id', get_md5(response.url))
         item_loader.add_css("create_date", "p.entry-meta-hide-on-mobile::text")
         item_loader.add_value("front_image_url", [front_image_url])
-        item_loader.add_css("praise_nums", ".vote-post-up h10::text")
+        item_loader.add_css("praise_nums", ".vote-post-up h10")
         item_loader.add_css("comment_nums", "a[href='#article-comment'] span::text")
         item_loader.add_css("fav_nums", ".bookmark-btn::text")
         item_loader.add_css("tags", "p.entry-meta-hide-on-mobile a::text")
