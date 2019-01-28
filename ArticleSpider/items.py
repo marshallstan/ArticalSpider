@@ -20,6 +20,8 @@ class ArticlespiderItem(scrapy.Item):
 
 
 def date_convert(value):
+    if value:
+        value = value.strip().replace('·', '').strip()
     # noinspection PyBroadException
     try:
         create_date = datetime.datetime.strptime(value, '%Y/%m/%d').date()
